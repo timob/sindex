@@ -1,0 +1,183 @@
+package list
+
+/*
+Use:
+----
+
+type userList list.Slice
+
+func (u *userList) Slice() (r []user) {
+	return u.Make(r).([]user)[:u.Len()]
+}
+
+func (u *userList) Access() (r []user) {
+	return u.Make(r).([]user)[:u.Len()]
+}
+
+
+func blah() {
+	u := list.NewSliceList(&userList{data:make([]user, 0, 100)}).(*userList)
+
+	u.data[u.Append()] = user{name: "donny k"}
+	u.data[u.Append()] = user{name: "vito"}
+	u.data[u.Append()] = user{name: "ralphie"}
+
+	all := getUsers()
+	for iter := u.Iterator(0); iter.Next(); {
+		all.data[all.Append()] = u.data[iter.Pos()]
+	}
+
+}
+
+func old() {
+	u := make([]user, 0, 100)
+	u = append(u, user{name: "donny k"})
+	u = append(u, user{name: "vito"})
+	u = append(u, user{name: "ralphie"})
+
+	all := getUsers()
+	for i, v := range u {
+		all = append(all, v)
+	}
+}
+
+type userList struct {
+	data []user
+	list.Slice
+}
+
+func blah2() {
+	u := list.NewSliceList(&userList{}, 100).(*userList)
+
+	u.data[u.Append()] = user{name: "donny k"}
+	u.data[u.Append()] = user{name: "vito"}
+	u.data[u.Append()] = user{name: "ralphie"}
+
+	all := getUsers()
+	for u.Len() != 0 {
+		for iter := all.Iterator(0); iter.Next() && u.Len() != 0; {
+			if all.data[iter.Pos()].rank == "capo" {
+				all.data[iter.Insert()] = u.data[u.Pos(0)]
+				u.Remove(0)
+			}
+		}
+	}
+}
+
+func blah3() {
+	l := list.NewSliceList(&lineList{}, 100).(*lineList)
+	l2 := list.NewSliceList(&lineList{}, 100).(*lineList)
+
+	iter := l.Iterator(0)
+	iter2 := l2.Iterator(0)
+A:	for iter.Next() {
+		for iter2.Next() {
+			if l.data[l.Pos()] > l2.data[l.Pos()] {
+				 l.data[l.Insert()] = l2.data[l.Pos()]
+			} else {
+				break A
+			}
+		}
+		break
+	}
+
+
+}
+
+
+func old2() {
+	u := make([]user, 0, 100)
+
+	u = append(u, user{name: "donny k"})
+	u = append(u, user{name: "vito"})
+	u = append(u, user{name: "ralphie"})
+
+	all := getUsers()
+	for len(u) != 0 {
+		inserCount := 0
+		for i := 0; i < len(all); i++ {
+			p := i + inserCount
+			if all[p].rank == "capo" {
+				all = append(all, user{})
+				copy(all[p+1:], all[p:])
+				all[p] = u[0]
+				u := u[1:len(u)]
+				insertCount++
+			}
+		}
+	}
+}
+
+general remove
+list.Remove(3)
+
+list = append(list[:3], list[3+1: len(list)]...)
+
+
+want funcs for remove, insert, iterate
+
+func new2() {
+	u := make([]user, 0, 100)
+
+	u = append(u, user{name: "donny k"})
+	u = append(u, user{name: "vito"})
+	u = append(u, user{name: "ralphie"})
+
+	iter2 := list.Iterator(0, len(u))
+	all := getUsers()
+	for len(u) != 0 {
+		for iter := list.Iterator(0, len(all)); iter.Next(); {
+			if all[iter.Pos].rank == "capo" {
+				iter2.Next()
+				all = append(all, user{})
+				iter.Insert(all,  u[iter2.Pos])
+
+				iter2.Remove()
+				u = u[:len(u)-1]
+
+				copy(all[iter.Pos:], all[iter.Pos-1:])
+				all[iter.Pos-1] = u[iter2.Pos]
+
+				u = append(u[:iter2.Remove()], u[iter2.Remove()+1]...)
+			}
+		}
+	}
+}
+
+
+SliceInsert(all,
+
+
+
+
+
+func altnew2() {
+	u := &userList{}
+
+	u.Slice()[u.Append()] = user{name: "donny k"}
+	u.Slice()[u.Append()] = user{name: "vito"}
+	u.Slice()[u.Append()] = user{name: "ralphie"}
+
+	all := getUsers()
+	for u.Len() != 0 {
+		for iter := all.Iterator(0); iter.Next() && u.Len() != 0; {
+			if all.Slice()[iter.Pos()].rank == "capo" {
+				all.Slice()[iter.Insert()] = u.Slice()[0]
+				u.Remove(0)
+			}
+		}
+	}
+}
+
+//				all = append(all, user{})
+//				all[iter.Insert()] = u[iter2.Pos()]
+
+
+user
+
+ */
+
+type Slice struct {
+	len int
+	slice interface{}
+}
