@@ -58,6 +58,22 @@ func TestInterfaceList(t *testing.T) {
 	}
 }
 
+func TestSimpleIterator(t *testing.T) {
+    list := NewSliceList(&stringList{}).(*stringList)
+
+    list.Data[list.Append()] = "aaa"
+    list.Data[list.Append()] = "bbb"
+    iter := list.Iterator(1)
+    iter.Next()
+    if list.Data[iter.Pos()] != "bbb" {
+        t.Fatal("fail")
+    }
+    iter.Prev()
+    if list.Data[iter.Pos()] != "aaa" {
+        t.Fatalf("fail %v", list.Data[iter.Pos()])
+    }
+}
+
 func ExampleIterator() {
 	list := NewSliceList(&stringList{}).(*stringList)
 

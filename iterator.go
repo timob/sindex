@@ -44,6 +44,7 @@ func (i *Iterator) Next() bool {
 		} else {
 			i.valid = true
 			i.moveOnNext = true
+			i.moveOnPrev = true
 			return true
 		}
 	} else {
@@ -66,6 +67,7 @@ func (i *Iterator) Prev() bool {
 		} else {
 			i.valid = true
 			i.moveOnPrev = true
+			i.moveOnNext = true
 			return true
 		}
 	} else {
