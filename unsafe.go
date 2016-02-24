@@ -1,6 +1,6 @@
 // +build !js
 
-package list
+package sindex
 
 import (
 	"reflect"
@@ -8,12 +8,12 @@ import (
 )
 
 type unsafeSlice struct {
-	size uintptr
-	base unsafe.Pointer
+	size   uintptr
+	base   unsafe.Pointer
 	header unsafe.Pointer
 }
 
-func setUnsafeSliceBase(s *Slice) {
+func setUnsafeSliceBase(s *List) {
 	s.size = s.sliceV.Type().Elem().Size()
 	if s.sliceV.Cap() > 0 {
 		oldLen := s.sliceV.Len()
@@ -24,7 +24,7 @@ func setUnsafeSliceBase(s *Slice) {
 	s.header = unsafe.Pointer(s.sliceV.Addr().Pointer())
 }
 
-func copySlice(s *Slice, dstI, srcI, len int) {
+func copySlice(s *List, dstI, srcI, len int) {
 	lenBytes := int(s.size * uintptr(len))
 
 	data := uintptr(s.base) + s.size*uintptr(dstI)
@@ -36,7 +36,7 @@ func copySlice(s *Slice, dstI, srcI, len int) {
 	copy(dst, src)
 }
 
-func setSliceLen(s *Slice, len int) {
+func setSliceLen(s *List, len int) {
 	header := (*reflect.SliceHeader)(s.header)
 	header.Len = len
 }

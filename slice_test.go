@@ -1,19 +1,19 @@
-package list
+package sindex
 
 import (
-	"testing"
 	"bytes"
 	"fmt"
+	"testing"
 )
 
 type byteList struct {
 	Data []byte
-	Slice
+	List
 }
 
 func TestSlice(t *testing.T) {
-	data := []byte{'h','e','l','l','o'}
-	list := NewSliceList(&byteList{Data: data}).(*byteList)
+	data := []byte{'h', 'e', 'l', 'l', 'o'}
+	list := NewList(&byteList{Data: data}).(*byteList)
 	for iter := list.Iterator(0); iter.Next(); {
 		if list.Data[iter.Pos()] == 'h' {
 			iter.Remove()
@@ -32,11 +32,11 @@ func TestSlice(t *testing.T) {
 
 type stringList struct {
 	Data []string
-	Slice
+	List
 }
 
 func TestInterfaceList(t *testing.T) {
-	list := NewSliceList(&stringList{}).(*stringList)
+	list := NewList(&stringList{}).(*stringList)
 
 	list.Data[list.Append()] = "Alpha"
 	list.Data[list.Append()] = "hello world"
@@ -59,23 +59,23 @@ func TestInterfaceList(t *testing.T) {
 }
 
 func TestSimpleIterator(t *testing.T) {
-    list := NewSliceList(&stringList{}).(*stringList)
+	list := NewList(&stringList{}).(*stringList)
 
-    list.Data[list.Append()] = "aaa"
-    list.Data[list.Append()] = "bbb"
-    iter := list.Iterator(1)
-    iter.Next()
-    if list.Data[iter.Pos()] != "bbb" {
-        t.Fatal("fail")
-    }
-    iter.Prev()
-    if list.Data[iter.Pos()] != "aaa" {
-        t.Fatalf("fail %v", list.Data[iter.Pos()])
-    }
+	list.Data[list.Append()] = "aaa"
+	list.Data[list.Append()] = "bbb"
+	iter := list.Iterator(1)
+	iter.Next()
+	if list.Data[iter.Pos()] != "bbb" {
+		t.Fatal("fail")
+	}
+	iter.Prev()
+	if list.Data[iter.Pos()] != "aaa" {
+		t.Fatalf("fail %v", list.Data[iter.Pos()])
+	}
 }
 
 func ExampleIterator() {
-	list := NewSliceList(&stringList{}).(*stringList)
+	list := NewList(&stringList{}).(*stringList)
 
 	list.Data[list.Append()] = "Alpha"
 	list.Data[list.Append()] = "testdata"
@@ -98,10 +98,9 @@ func ExampleIterator() {
 	// testdata2
 }
 
-
 type interfaceList struct {
 	Data []interface{}
-	Slice
+	List
 }
 
 type fixedStack struct {
@@ -144,7 +143,7 @@ func useStack(s *fixedStack) {
 }
 
 func ExampleStack() {
-	s := &fixedStack{3, NewSliceList(&interfaceList{}).(*interfaceList)}
+	s := &fixedStack{3, NewList(&interfaceList{}).(*interfaceList)}
 	useStack(s)
 	// Output:
 	// push 1

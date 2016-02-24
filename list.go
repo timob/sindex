@@ -1,4 +1,4 @@
-package list
+package sindex
 
 import (
 	"errors"
@@ -12,10 +12,10 @@ type IteratorInterface interface {
 	Pos() int
 	Insert() int
 	Remove()
-//	Err() (err error)
+	//	Err() (err error)
 }
 
-type ListInterface interface {
+type Interface interface {
 	Append() int
 	Remove(int)
 	Insert(int) int
@@ -23,10 +23,10 @@ type ListInterface interface {
 	Len() int
 	Iterator(int) IteratorInterface
 	Clear()
-//	Err() (err error)
+	//	Err() (err error)
 }
 
-type Option struct {}
+type Option struct{}
 
 func (o *Option) listOption() {}
 

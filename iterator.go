@@ -1,4 +1,4 @@
-package list
+package sindex
 
 type IteratorAdapter interface {
 	AtLastElement() bool

@@ -1,12 +1,13 @@
-package list
+package sindex
+
 /*
- Slice list
+ List
+ Slice contains the list in order, the length of the slice is the length of the list.
+ The slice header (length/capacity) should *NOT* be modified directly.
+
  Uses reflection for allocation when growing
  Uses unsafe copy for remove/insert
- Slice contains the list in order, the length of the slice is the length of the list.
-
- The slice header (length/capacity) should *NOT* be modified directly.
- */
+*/
 
 import (
 	"reflect"
@@ -15,33 +16,33 @@ import (
 const reserveSize = 10
 const growthFactor = 2
 
-type SliceListInterface interface {
-	ListInterface
-	getListSliceStruct() *Slice
+type ListInterface interface {
+	Interface
+	getListStruct() *List
 }
 
 /*
- Slice List
+ List
  cap(slice) == capLen >= len(slice) == listLen
 
  After append/insert when listLen == capLen
  cap(slice) == capLen == (growthFactor * listLen) + reserveSize >= len(slice) == listLen
- */
-type Slice struct {
+*/
+type List struct {
 	listLen int
-	capLen int
-	sliceV reflect.Value
+	capLen  int
+	sliceV  reflect.Value
 	unsafeSlice
 }
 
-func NewSliceList(sliceList SliceListInterface, options ...OptionInterface) (ret interface{}) {
+func NewList(sliceList ListInterface, options ...OptionInterface) (ret interface{}) {
 	ret = sliceList
 	lv := reflect.ValueOf(sliceList).Elem()
 	if lv.Kind() != reflect.Struct {
 		return
 	}
-	ls := sliceList.getListSliceStruct()
-	for i := 0 ; i < lv.NumField(); i++ {
+	ls := sliceList.getListStruct()
+	for i := 0; i < lv.NumField(); i++ {
 		fv := lv.Field(i)
 		if fv.Kind() == reflect.Slice {
 			ls.sliceV = fv
@@ -58,12 +59,12 @@ func NewSliceList(sliceList SliceListInterface, options ...OptionInterface) (ret
 	return
 }
 
-func (s *Slice) getListSliceStruct() *Slice {
+func (s *List) getListStruct() *List {
 	return s
 }
 
 // set slice capacity
-func (s *Slice) SetCap(size int) {
+func (s *List) SetCap(size int) {
 	if size > s.listLen {
 		if size <= s.capLen {
 			s.sliceV.SetCap(size)
@@ -78,29 +79,29 @@ func (s *Slice) SetCap(size int) {
 }
 
 // reset slice to zero length. which means list len is zero too
-func (s *Slice) Clear() {
+func (s *List) Clear() {
 	s.sliceV.SetLen(0)
 	s.listLen = 0
 }
 
-func (s *Slice) Append() (i int) {
+func (s *List) Append() (i int) {
 	i = s.listLen
 	if s.listLen == s.capLen {
-		s.SetCap(s.listLen * growthFactor + reserveSize)
+		s.SetCap(s.listLen*growthFactor + reserveSize)
 	}
 	s.listLen++
 	setSliceLen(s, s.listLen)
 	return
 }
 
-func (s *Slice) Remove(pos int) {
+func (s *List) Remove(pos int) {
 	iter := s.Iterator(pos)
 	if iter.Next() {
 		iter.Remove()
 	}
 }
 
-func (s *Slice) Insert(pos int) int {
+func (s *List) Insert(pos int) int {
 	iter := s.Iterator(pos)
 	if iter.Next() {
 		return iter.Insert()
@@ -110,46 +111,46 @@ func (s *Slice) Insert(pos int) int {
 	return 0
 }
 
-func (s *Slice) Pos(pos int) int {
+func (s *List) Pos(pos int) int {
 	return pos
 }
 
-func (s *Slice) Len() int {
+func (s *List) Len() int {
 	return s.listLen
 }
 
-func (s *Slice) Iterator(pos int) IteratorInterface {
+func (s *List) Iterator(pos int) IteratorInterface {
 	if pos >= s.listLen {
-		return NewEmptyIterator(&sliceIteratorAdapter{s, pos})
+		return NewEmptyIterator(&ListIteratorAdapter{s, pos})
 	} else {
-		return NewIterator(&sliceIteratorAdapter{s, pos})
+		return NewIterator(&ListIteratorAdapter{s, pos})
 	}
 }
 
-type sliceIteratorAdapter struct {
-	list *Slice
-	pos int
+type ListIteratorAdapter struct {
+	list *List
+	pos  int
 }
 
-func (s *sliceIteratorAdapter) AtLastElement() bool {
-	return s.pos == s.list.listLen - 1
+func (s *ListIteratorAdapter) AtLastElement() bool {
+	return s.pos == s.list.listLen-1
 }
 
-func (s *sliceIteratorAdapter) AtFirstElement() bool {
+func (s *ListIteratorAdapter) AtFirstElement() bool {
 	return s.pos == 0
 }
 
-func (s *sliceIteratorAdapter) MoveForward() {
+func (s *ListIteratorAdapter) MoveForward() {
 	s.pos++
 }
 
-func (s *sliceIteratorAdapter) MoveBack() {
+func (s *ListIteratorAdapter) MoveBack() {
 	s.pos--
 }
 
-func (s *sliceIteratorAdapter) RemoveElement(relPos int) {
+func (s *ListIteratorAdapter) RemoveElement(relPos int) {
 	pos := s.pos + relPos
-	copySlice(s.list, pos, pos + 1, s.list.listLen - 1 - pos)
+	copySlice(s.list, pos, pos+1, s.list.listLen-1-pos)
 	if relPos == prev {
 		s.pos--
 	}
@@ -157,18 +158,18 @@ func (s *sliceIteratorAdapter) RemoveElement(relPos int) {
 	setSliceLen(s.list, s.list.listLen)
 }
 
-func (s *sliceIteratorAdapter) InsertElement() int {
+func (s *ListIteratorAdapter) InsertElement() int {
 	if s.list.listLen == s.list.capLen {
-		s.list.SetCap(s.list.listLen * growthFactor + reserveSize)
+		s.list.SetCap(s.list.listLen*growthFactor + reserveSize)
 	}
-	setSliceLen(s.list, s.list.listLen + 1)
-	copySlice(s.list, s.pos+1, s.pos, s.list.listLen - s.pos)
+	setSliceLen(s.list, s.list.listLen+1)
+	copySlice(s.list, s.pos+1, s.pos, s.list.listLen-s.pos)
 
 	s.pos++
 	s.list.listLen++
-	return s.pos-1
+	return s.pos - 1
 }
 
-func (s *sliceIteratorAdapter) Pos() int {
+func (s *ListIteratorAdapter) Pos() int {
 	return s.pos
 }

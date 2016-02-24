@@ -1,16 +1,16 @@
-package list
+package sindex
 
-type ByteSlice struct {
+type ByteList struct {
 	Data []byte
-	Slice
+	List
 }
 
-type StringSlice struct {
+type StringList struct {
 	Data []string
-	Slice
+	List
 }
 
-type InterfaceSlice struct {
+type InterfaceList struct {
 	Data []interface{}
-	Slice
+	List
 }
