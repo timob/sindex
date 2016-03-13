@@ -1,6 +1,6 @@
 package sindex
 
-type IteratorAdapter interface {
+type iteratorAdapter interface {
 	AtLastElement() bool
 	AtFirstElement() bool
 	MoveForward()
@@ -10,8 +10,8 @@ type IteratorAdapter interface {
 	Pos() int
 }
 
-type Iterator struct {
-	adapter IteratorAdapter
+type iterator struct {
+	adapter iteratorAdapter
 
 	valid bool
 
@@ -21,15 +21,15 @@ type Iterator struct {
 	empty bool
 }
 
-func NewIterator(adapter IteratorAdapter) IteratorInterface {
-	return &Iterator{adapter: adapter}
+func newIterator(adapter iteratorAdapter) IteratorInterface {
+	return &iterator{adapter: adapter}
 }
 
-func NewEmptyIterator(adapter IteratorAdapter) IteratorInterface {
-	return &Iterator{adapter: adapter, empty: true}
+func newEmptyIterator(adapter iteratorAdapter) IteratorInterface {
+	return &iterator{adapter: adapter, empty: true}
 }
 
-func (i *Iterator) Next() bool {
+func (i *iterator) Next() bool {
 	if !i.empty {
 		if i.moveOnNext {
 			if !i.adapter.AtLastElement() {
@@ -52,7 +52,7 @@ func (i *Iterator) Next() bool {
 	}
 }
 
-func (i *Iterator) Prev() bool {
+func (i *iterator) Prev() bool {
 	if !i.empty {
 		if i.moveOnPrev {
 			if !i.adapter.AtFirstElement() {
@@ -75,7 +75,7 @@ func (i *Iterator) Prev() bool {
 	}
 }
 
-func (i *Iterator) Insert() (index int) {
+func (i *iterator) Insert() (index int) {
 	if i.valid {
 		return i.adapter.InsertElement()
 	} else {
@@ -89,7 +89,7 @@ const (
 	next int = +1
 )
 
-func (i *Iterator) Remove() {
+func (i *iterator) Remove() {
 	if !i.valid {
 		return
 	}
@@ -113,6 +113,6 @@ func (i *Iterator) Remove() {
 	}
 }
 
-func (i *Iterator) Pos() int {
+func (i *iterator) Pos() int {
 	return i.adapter.Pos()
 }
