@@ -49,7 +49,7 @@ func NewList(slicePointer interface{}, options ...OptionInterface) *List {
 	return ls
 }
 
-func InitList(structPointer ListInterface, options ...OptionInterface) (structPointerRet interface{}) {
+func InitList(structPointer ListInterface, options ...OptionInterface) (structPointerRet ListInterface) {
 	structPointerRet = structPointer
 	ls := structPointer.getListStruct()
 	pv := reflect.ValueOf(structPointer)

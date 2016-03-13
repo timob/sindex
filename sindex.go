@@ -1,10 +1,6 @@
 package sindex
 
-import (
-	"errors"
-)
-
-var IndexOutOfBounds = errors.New("List index out of bounds")
+//var IndexOutOfBounds = errors.New("List index out of bounds")
 
 type IteratorInterface interface {
 	Next() bool
