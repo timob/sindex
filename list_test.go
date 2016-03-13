@@ -1,32 +1,26 @@
 package sindex
 
 import (
-	"bytes"
 	"fmt"
 	"testing"
 )
 
-type byteList struct {
-	Data []byte
-	List
-}
-
 func TestSlice(t *testing.T) {
 	data := []byte{'h', 'e', 'l', 'l', 'o'}
-	list := NewList(&byteList{Data: data}).(*byteList)
+	list := NewList(&data)
 	for iter := list.Iterator(0); iter.Next(); {
-		if list.Data[iter.Pos()] == 'h' {
+		if data[iter.Pos()] == 'h' {
 			iter.Remove()
-		} else if list.Data[iter.Pos()] == 'l' {
-			list.Data[iter.Insert()] = 'l'
+		} else if data[iter.Pos()] == 'l' {
+			data[iter.Insert()] = 'l'
 			iter.Next()
-		} else if list.Data[iter.Pos()] == 'o' {
-			list.Data[list.Append()] = 's'
+		} else if data[iter.Pos()] == 'o' {
+			data[list.Append()] = 's'
 		}
 	}
-	t.Logf("list len = %d cap = %d", len(list.Data), cap(list.Data))
-	if bytes.Compare(list.Data, []byte("elllos")) != 0 {
-		t.Fatalf("unexpected list value %s ", list.Data)
+	t.Logf("list len = %d cap = %d", len(data), cap(data))
+	if string(data) != "elllos" {
+		t.Fatalf("unexpected list value %s ", data)
 	}
 }
 
@@ -36,7 +30,7 @@ type stringList struct {
 }
 
 func TestInterfaceList(t *testing.T) {
-	list := NewList(&stringList{}).(*stringList)
+	list := InitList(&stringList{}).(*stringList)
 
 	list.Data[list.Append()] = "Alpha"
 	list.Data[list.Append()] = "hello world"
@@ -59,7 +53,7 @@ func TestInterfaceList(t *testing.T) {
 }
 
 func TestSimpleIterator(t *testing.T) {
-	list := NewList(&stringList{}).(*stringList)
+	list := InitList(&stringList{}).(*stringList)
 
 	list.Data[list.Append()] = "aaa"
 	list.Data[list.Append()] = "bbb"
@@ -75,7 +69,7 @@ func TestSimpleIterator(t *testing.T) {
 }
 
 func ExampleIterator() {
-	list := NewList(&stringList{}).(*stringList)
+	list := InitList(&stringList{}).(*stringList)
 
 	list.Data[list.Append()] = "Alpha"
 	list.Data[list.Append()] = "testdata"
@@ -143,7 +137,7 @@ func useStack(s *fixedStack) {
 }
 
 func ExampleStack() {
-	s := &fixedStack{3, NewList(&interfaceList{}).(*interfaceList)}
+	s := &fixedStack{3, InitList(&interfaceList{}).(*interfaceList)}
 	useStack(s)
 	// Output:
 	// push 1

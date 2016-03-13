@@ -85,7 +85,7 @@ func (i *Iterator) Insert() (index int) {
 
 const (
 	prev int = -1
-	cur int = 0
+	cur  int = 0
 	next int = +1
 )
 
@@ -105,7 +105,7 @@ func (i *Iterator) Remove() {
 			i.adapter.MoveBack()
 			i.adapter.RemoveElement(next)
 		}
-	} else  {
+	} else {
 		i.moveOnPrev = true
 		i.moveOnNext = false
 		i.adapter.MoveForward()

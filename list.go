@@ -35,27 +35,42 @@ type List struct {
 	unsafeSlice
 }
 
-func NewList(sliceList ListInterface, options ...OptionInterface) (ret interface{}) {
-	ret = sliceList
-	lv := reflect.ValueOf(sliceList).Elem()
-	if lv.Kind() != reflect.Struct {
+func NewList(slicePointer interface{}, options ...OptionInterface) *List {
+	pv := reflect.ValueOf(slicePointer)
+	if pv.Kind() != reflect.Ptr || pv.Elem().Kind() != reflect.Slice {
+		panic("slicePtr argument is not a pointer to a slice")
+	}
+
+	ls := &List{}
+	ls.sliceV = pv.Elem()
+	setUnsafeSliceBase(ls)
+	ls.listLen = ls.sliceV.Len()
+	ls.capLen = ls.sliceV.Cap()
+	return ls
+}
+
+func InitList(structPointer ListInterface, options ...OptionInterface) (structPointerRet interface{}) {
+	structPointerRet = structPointer
+	ls := structPointer.getListStruct()
+	pv := reflect.ValueOf(structPointer)
+	if pv.Kind() != reflect.Ptr || pv.Elem().Kind() != reflect.Struct || ls == nil {
 		return
 	}
-	ls := sliceList.getListStruct()
+	lv := pv.Elem()
+	var sv reflect.Value
 	for i := 0; i < lv.NumField(); i++ {
 		fv := lv.Field(i)
 		if fv.Kind() == reflect.Slice {
-			ls.sliceV = fv
+			sv = fv
 			break
 		}
 	}
-	setUnsafeSliceBase(ls)
-
-	if (ls.sliceV == reflect.Value{}) {
+	if (sv == reflect.Value{}) {
 		return
 	}
-	ls.listLen = ls.sliceV.Len()
-	ls.capLen = ls.sliceV.Cap()
+
+	nl := NewList(sv.Addr().Interface())
+	*ls = *nl
 	return
 }
 
