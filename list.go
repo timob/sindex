@@ -6,7 +6,7 @@ package sindex
  The slice header (length/capacity) should *NOT* be modified directly.
 
  Uses reflection for allocation when growing
- Uses unsafe copy for remove/insert
+ Uses unsafe copy for remove/insert (when supported)
 */
 
 import (
@@ -21,13 +21,10 @@ type ListInterface interface {
 	getListStruct() *List
 }
 
-/*
- List
- cap(slice) == capLen >= len(slice) == listLen
+// List satisfies this interface.
 
- After append/insert when listLen == capLen
- cap(slice) == capLen == (growthFactor * listLen) + reserveSize >= len(slice) == listLen
-*/
+// Maps list positions directly to slice indexes. The length of the list is the length of the slice.
+// The slice will grow if at capacity when calling Append/Insert. Satisfies ListInterface.
 type List struct {
 	listLen int
 	capLen  int
@@ -35,6 +32,14 @@ type List struct {
 	unsafeSlice
 }
 
+/*
+ cap(slice) == capLen >= len(slice) == listLen
+ After append/insert when listLen == capLen:
+ cap(slice) == capLen == (growthFactor * listLen) + reserveSize >= len(slice) == listLen
+*/
+
+// Returns a new List that manages the slice pointed to by slicePointer. slicePointer should be a pointer to a slice.
+// The slice pointed to by slicePointer will not be changed, the new List will be of the same length.
 func NewList(slicePointer interface{}, options ...OptionInterface) *List {
 	pv := reflect.ValueOf(slicePointer)
 	if pv.Kind() != reflect.Ptr || pv.Elem().Kind() != reflect.Slice {
@@ -49,6 +54,7 @@ func NewList(slicePointer interface{}, options ...OptionInterface) *List {
 	return ls
 }
 
+// Initialize struct that contains a List and slice field which is pointed to by structPointer. structPointer is passed through as return value. Calls NewList to have List field manage slice field.
 func InitList(structPointer ListInterface, options ...OptionInterface) (structPointerRet ListInterface) {
 	structPointerRet = structPointer
 	ls := structPointer.getListStruct()
@@ -78,7 +84,7 @@ func (s *List) getListStruct() *List {
 	return s
 }
 
-// set slice capacity
+// Set slice capacity, size must be greater than list length.
 func (s *List) SetCap(size int) {
 	if size > s.listLen {
 		if size <= s.capLen {
@@ -93,14 +99,15 @@ func (s *List) SetCap(size int) {
 	}
 }
 
-// reset slice to zero length. which means list len is zero too
+// Clear the list to be empty. Slice capacity remains the same.
 func (s *List) Clear() {
 	s.sliceV.SetLen(0)
 	s.listLen = 0
 }
 
-func (s *List) Append() (i int) {
-	i = s.listLen
+// Returns the index of where to put newly appended list item.
+func (s *List) Append() (index int) {
+	index = s.listLen
 	if s.listLen == s.capLen {
 		s.SetCap(s.listLen*growthFactor + reserveSize)
 	}
@@ -109,6 +116,7 @@ func (s *List) Append() (i int) {
 	return
 }
 
+// Remove item at given position. Slice capacity remains the same.
 func (s *List) Remove(pos int) {
 	iter := s.Iterator(pos)
 	if iter.Next() {
@@ -116,7 +124,8 @@ func (s *List) Remove(pos int) {
 	}
 }
 
-func (s *List) Insert(pos int) int {
+// Insert item before given position. Returns index of where to put newly inserted list item.
+func (s *List) Insert(pos int) (index int) {
 	iter := s.Iterator(pos)
 	if iter.Next() {
 		return iter.Insert()
@@ -126,14 +135,17 @@ func (s *List) Insert(pos int) int {
 	return 0
 }
 
-func (s *List) Pos(pos int) int {
+// Return the index of the given position. O(1) operation.
+func (s *List) Pos(pos int) (index int) {
 	return pos
 }
 
+// Return length of list.
 func (s *List) Len() int {
 	return s.listLen
 }
 
+// Return iterator. It is initially invalid. The given position will be the position of the iterator after a Next() or Prev() call.
 func (s *List) Iterator(pos int) IteratorInterface {
 	if pos >= s.listLen {
 		return newEmptyIterator(&listIteratorAdapter{s, pos})
