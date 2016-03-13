@@ -8,7 +8,7 @@ https://godoc.org/github.com/timob/sindex
 
 ####Example
 ```go
-// return Command line arguments in the order they were given removing duplicates.
+// return command line arguments in the order they were given removing duplicates.
 package main
 
 import (
