@@ -1,5 +1,5 @@
 /*
-Sindex is a slice indexing library. It maintains an ordered list, by mapping list positions to slice indexes.
+SIndex is a slice indexing library. It maintains an ordered list, by mapping list positions to slice indexes.
 
 List implementation types: List (Basic slice list), LinkedList (Todo)
 */

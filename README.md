@@ -1,7 +1,7 @@
-sindex
+SIndex
 ======
 
-Slice indexing library for Golang.
+Slice Indexing library for Golang.
 
 ####Documentation
 https://godoc.org/github.com/timob/sindex

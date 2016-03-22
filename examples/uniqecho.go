@@ -2,18 +2,18 @@
 package main
 
 import (
-	"github.com/timob/sindex"
 	"fmt"
+	"github.com/timob/sindex"
 	"os"
 )
 
 func main() {
-	args := sindex.InitList(&sindex.StringList{Data:append([]string{}, os.Args...)}).(*sindex.StringList)
+	args := sindex.InitList(&sindex.StringList{Data: append([]string{}, os.Args...)}).(*sindex.StringList)
 	args.Remove(0)
 	argSet := make(map[string]struct{})
 	for iter := args.Iterator(0); iter.Next(); {
 		v := args.Data[iter.Pos()]
-		if _, ok := argSet[v] ; ok {
+		if _, ok := argSet[v]; ok {
 			iter.Remove()
 		} else {
 			argSet[v] = struct{}{}

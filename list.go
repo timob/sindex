@@ -16,15 +16,14 @@ import (
 const reserveSize = 10
 const growthFactor = 2
 
+// List satisfies this interface.
 type ListInterface interface {
 	Interface
 	getListStruct() *List
 }
 
-// List satisfies this interface.
-
 // Maps list positions directly to slice indexes. The length of the list is the length of the slice.
-// The slice will grow if at capacity when calling Append/Insert. Satisfies ListInterface.
+// The slice will grow if at capacity when calling Append/Insert.
 type List struct {
 	listLen int
 	capLen  int
@@ -54,7 +53,14 @@ func NewList(slicePointer interface{}, options ...OptionInterface) *List {
 	return ls
 }
 
-// Initialize struct that contains a List and slice field which is pointed to by structPointer. structPointer is passed through as return value. Calls NewList to have List field manage slice field.
+// Initializes a struct that promotes a List and also has a slice field. Pass this struct as a pointer to structPointer.
+// Returns structPointer. This will call NewList to have the List field manage slice field.
+// eg.
+// 		type stringList struct {
+// 			Data []string
+// 			List
+// 		}
+//		strlist := InitList(&stringList{}).(*stringList)
 func InitList(structPointer ListInterface, options ...OptionInterface) (structPointerRet ListInterface) {
 	structPointerRet = structPointer
 	ls := structPointer.getListStruct()
