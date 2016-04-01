@@ -1,23 +1,25 @@
-package common
+package sindex
 
-import "github.com/timob/sindex"
-
+// Common List type
 type ByteList struct {
 	Data []byte
-	sindex.List
+	List
 }
 
+// Common List type
 type IntList struct {
 	Data []int
-	sindex.List
+	List
 }
 
+// Common List type
 type StringList struct {
 	Data []string
-	sindex.List
+	List
 }
 
+// Common List type
 type InterfaceList struct {
 	Data []interface{}
-	sindex.List
+	List
 }
