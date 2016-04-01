@@ -60,8 +60,8 @@ func NewList(slicePointer interface{}, options ...OptionInterface) *List {
 // 			Data []string
 // 			List
 // 		}
-//		strlist := InitList(&stringList{}).(*stringList)
-func InitList(structPointer ListInterface, options ...OptionInterface) (structPointerRet ListInterface) {
+//		strlist := InitListType(&stringList{}).(*stringList)
+func InitListType(structPointer ListInterface, options ...OptionInterface) (structPointerRet ListInterface) {
 	structPointerRet = structPointer
 	ls := structPointer.getListStruct()
 	pv := reflect.ValueOf(structPointer)

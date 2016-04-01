@@ -30,7 +30,7 @@ type stringList struct {
 }
 
 func TestInterfaceList(t *testing.T) {
-	list := InitList(&stringList{}).(*stringList)
+	list := InitListType(&stringList{}).(*stringList)
 
 	list.Data[list.Append()] = "Alpha"
 	list.Data[list.Append()] = "hello world"
@@ -53,7 +53,7 @@ func TestInterfaceList(t *testing.T) {
 }
 
 func TestSimpleIterator(t *testing.T) {
-	list := InitList(&stringList{}).(*stringList)
+	list := InitListType(&stringList{}).(*stringList)
 
 	list.Data[list.Append()] = "aaa"
 	list.Data[list.Append()] = "bbb"
@@ -69,7 +69,7 @@ func TestSimpleIterator(t *testing.T) {
 }
 
 func ExampleIterator() {
-	list := InitList(&stringList{}).(*stringList)
+	list := InitListType(&stringList{}).(*stringList)
 
 	list.Data[list.Append()] = "Alpha"
 	list.Data[list.Append()] = "testdata"
@@ -137,7 +137,7 @@ func useStack(s *fixedStack) {
 }
 
 func ExampleStack() {
-	s := &fixedStack{3, InitList(&interfaceList{}).(*interfaceList)}
+	s := &fixedStack{3, InitListType(&interfaceList{}).(*interfaceList)}
 	useStack(s)
 	// Output:
 	// push 1
