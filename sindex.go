@@ -56,7 +56,7 @@ type Interface interface {
 	// Remove item at given position.
 	Remove(pos int)
 	// Insert item before given position. Returns index of where to put newly
-	// inserted list item.
+	// inserted list item. If pos >= Len() append.
 	Insert(pos int) (index int)
 	// Return the index of the given position.
 	Pos(pos int) (idex int)

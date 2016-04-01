@@ -130,15 +130,14 @@ func (s *List) Remove(pos int) {
 	}
 }
 
-// Insert item before given position. Returns index of where to put newly inserted list item.
+// Insert item before given position. Returns index of where to put newly inserted list item. If pos >= Len() append.
 func (s *List) Insert(pos int) (index int) {
 	iter := s.Iterator(pos)
 	if iter.Next() {
 		return iter.Insert()
-	} else if pos == 0 {
+	} else {
 		return s.Append()
 	}
-	return 0
 }
 
 // Return the index of the given position. O(1) operation.
