@@ -4,12 +4,11 @@ package main
 import (
 	"fmt"
 	"github.com/timob/sindex"
-	"github.com/timob/sindex/common"
 	"os"
 )
 
 func main() {
-	args := sindex.InitListType(&common.StringList{Data: append([]string{}, os.Args...)}).(*common.StringList)
+	args := sindex.InitListType(&sindex.StringList{Data: append([]string{}, os.Args...)}).(*sindex.StringList)
 	args.Remove(0)
 	argSet := make(map[string]struct{})
 	for iter := args.Iterator(0); iter.Next(); {
