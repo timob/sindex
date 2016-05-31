@@ -202,3 +202,28 @@ func ExampleList() {
 	}
 	// Output: hello world!
 }
+
+func TestInvalidIteratorInsert(t *testing.T) {
+	bytes := []byte("abc")
+	list := NewList(&bytes)
+	iter := list.Iterator(0)
+	for iter.Next() {
+	}
+
+	bytes[iter.Insert()] = 'x'
+	iter.Prev()
+	bytes[iter.Insert()] = 'y'
+	if string(bytes) != "abcyx" {
+		t.Fatal("invalid iterator test failed")
+	}
+
+	bytes = []byte{}
+	list = NewList(&bytes)
+	iter = list.Iterator(0)
+	iter.Next()
+	bytes[iter.Insert()] = 'a'
+	iter.Prev()
+	if bytes[iter.Pos()] != 'a' {
+		t.Fatal("invalid iterator test failed")
+	}
+}

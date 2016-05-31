@@ -1,6 +1,7 @@
 package sindex
 
 type iteratorAdapter interface {
+	Append() int
 	AtLastElement() bool
 	AtFirstElement() bool
 	MoveForward()
@@ -79,7 +80,17 @@ func (i *iterator) Insert() (index int) {
 	if i.valid {
 		return i.adapter.InsertElement()
 	} else {
-		return 0
+		var pos int
+		if i.empty {
+			i.moveOnPrev = false
+			i.moveOnNext = true
+			i.empty = false
+			pos = i.adapter.Append()
+		} else if i.adapter.AtLastElement() {
+			pos = i.adapter.Append()
+			i.adapter.MoveForward()
+		}
+		return pos
 	}
 }
 

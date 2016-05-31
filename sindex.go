@@ -39,8 +39,8 @@ type IteratorInterface interface {
 	Pos() (index int)
 	// Insert item before current position of the iterator. Returns the index of
 	// the newly inserted item. The item to which the iterator points to does
-	// not change but it's position in the list will have incremented. Must be
-	// called on valid iterator.
+	// not change but it's position in the list will have incremented. Append on
+	// invalid iterator.
 	Insert() (index int)
 	// Removes list item at position of iterator.
 	// Changes the state of the iterator to invalid until a subsequent call to

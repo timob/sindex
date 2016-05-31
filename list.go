@@ -205,3 +205,7 @@ func (s *listIteratorAdapter) InsertElement() int {
 func (s *listIteratorAdapter) Pos() int {
 	return s.pos
 }
+
+func (s *listIteratorAdapter) Append() int {
+	return s.list.Append()
+}
