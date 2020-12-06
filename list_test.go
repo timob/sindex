@@ -197,10 +197,15 @@ func ExampleList() {
 	bl := NewList(&bytes)
 	bytes[bl.Insert(5)] = ' '
 	bytes[bl.Append()] = '!'
+
+	fmt.Println(string(bytes))
+
 	for iter := bl.Iterator(0); iter.Next(); {
 		fmt.Print(string(bytes[iter.Pos()]))
 	}
-	// Output: hello world!
+	// Output:
+	// hello world!
+	// hello world!
 }
 
 func TestInvalidIteratorInsert(t *testing.T) {
